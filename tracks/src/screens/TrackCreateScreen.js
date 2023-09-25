@@ -1,53 +1,29 @@
 import '../_mockLocation';
-import React, { useEffect, useState} from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet} from 'react-native';
 import { Text } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { requestForegroundPermissionsAsync, watchPositionAsync, Accuracy } from 'expo-location'; 
 import Map from '../components/Map';
+import { Context as LocationContext } from '../Context/LocationContext';
+import useLocation from '../hooks/useLocation';
+import { withNavigationFocus } from 'react-navigation';
+import TrackForm from '../components/TrackForm';
 
-const TrackCreateScreen = () => {
-    const [err, setErr] = useState(null);
-    const startWatching = async () => {
-        try {
-            const { granted } = await requestForegroundPermissionsAsync();
-            await watchPositionAsync({
-                accuracy: Accuracy.BestForNavigation,
-                timeInterval: 1000,
-                distanceInterval: 10,
-            }, (location) => {
-                console.log(location);
-            });
-        } catch (e) {
-            setErr(e);
-        }
-    };
+const TrackCreateScreen = ({ isFocused }) => {
+    const { addLocation } = useContext(LocationContext);
 
-    useEffect(() => {
-        startWatching();
-    }, []);
-
+    const [err] = useLocation(isFocused,addLocation);
+     
     return (
         <SafeAreaView>
             <Text h2>Create a Track</Text>
             <Map />
             {err ? <Text>Please enable location services</Text> : null}
+            <TrackForm />
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({});
 
-export default TrackCreateScreen;
-
-
-// const startWatching = async () => {
-//     try {
-//       const { granted } = await requestPermissionsAsync();
-//       if (!granted) {
-//         throw new Error('Location permission not granted');
-//       }
-//     } catch (e) {
-//       setErr(e);
-//     }
-//   };
+export default withNavigationFocus(TrackCreateScreen);
