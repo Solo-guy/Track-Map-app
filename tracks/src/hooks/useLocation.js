@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { Accuracy, requestForegroundPermissionsAsync, watchPositionAsync } from "expo-location";
+import {
+  Accuracy,
+  requestForegroundPermissionsAsync,
+  watchPositionAsync,
+} from "expo-location";
 
 export default (shouldTrack, callback) => {
   const [err, setErr] = useState(null);
